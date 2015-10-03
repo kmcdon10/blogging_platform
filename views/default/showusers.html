@@ -1,0 +1,21 @@
+{{extend 'layout.html'}}
+
+<div>
+<h1>List of All Users</h1>
+<hr>
+<!-- {{=A('Search Blog Pages', _href=URL('index'))}}
+{{=form}}<br />{{=target_div}}
+<hr>
+<p class="lead">All Blog Pages</p>
+</div>
+ -->
+<ul>
+    {{for user in users:}}
+    <span>
+        <h4>
+            <a href="showuser/{{=user.id}}">{{=user.first_name}}</a><br>
+        </h4>
+    </span>
+    {{pass}}
+</ul>
+

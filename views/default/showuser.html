@@ -1,0 +1,15 @@
+{{extend 'layout.html'}}
+<h1>{{=user.first_name}} {{=user.last_name}}'s User Page</h1>
+{{=user.email}}
+<hr>
+<div class="text-primary"><h3>{{=user.first_name}}'s Blogs</h3></div>
+<div class="container">
+{{for page in pages:}}
+	<div>
+		<h4><a href="/blog5/default/show/{{=page.id}}">{{=page.title}}</a></h4>
+		<small class="text-muted">{{=page.created_on}}</small>
+		<h5>{{=page.body}}</h5>
+	</div>
+	<hr>
+{{pass}}
+</div>

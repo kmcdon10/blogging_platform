@@ -1,0 +1,29 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+
+{{block header}}
+    <header class="container-fluid background">
+      <div class="jumbotron text-center">
+        {{if response.title:}}
+        <h1>{{=response.title}}
+          <small>{{=response.subtitle or ''}}</small></h1>
+        {{pass}}
+      </div>
+    </header>
+{{end}}
+<h3>
+    All Blog Pages
+</h3>
+<h5>Search blog pages</h5>
+[ {{=A('search', _href=URL('search'))}} ]<br />
+
+<ul>
+    {{for page in pages:}}
+    <span>
+        <a><h4>{{=page.title}}</h4></a>
+        By: {{=page.created_by.first_name}}
+    </span>
+    {{pass}}
+</ul>
+
+    {{=A("Create a new blog", _href=URL("create"))}}

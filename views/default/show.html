@@ -1,0 +1,30 @@
+{{extend 'layout.html'}}
+<h1 class="text-primary">{{=page.title}}<br>
+	<a href="/blog5/default/show/{{=page.created_by}}"><small>By: {{=page.created_by.first_name}} {{=page.created_by.last_name}}</small></a>
+</h1>
+{{if auth.is_logged_in():}}
+  <a href="/blog5/default/createpage/{{=page.id}}"><button class="btn">Create</button></a>  
+  <a href="/blog5/default/editpage/{{=page.id}}"><button class="btn">Edit</button></a>
+{{pass}}
+
+<hr>
+<h2><small><p class="text-primary">About</p></small></h2>
+<div class="container">
+{{=MARKMIN(page.body)}}
+</div>
+<hr>
+<h2><small><p class="text-primary">Blog Posts</p></small></h2>
+<div class="container">
+{{for post in blogpost:}}
+  <h3><a href="/blog5/default/showpost/{{=post.id}}">{{=post.title}}</a></h3>
+  <p class="text-muted">Created on: {{=post.created_on}}</p>
+  <h4>{{=post.body}}</h4>
+  {{if len(post.tags):}}
+    <small>Tags:</small>
+      {{for tag in post.tags:}}
+        <span><small>{{=tag}},</small></span>
+    {{pass}}
+  {{pass}}
+  <hr>
+{{pass}}
+</div>

@@ -1,0 +1,66 @@
+def index():
+    login = A("login to post", _href=URL("user/login"), _class="btn btn-primary")
+    users = db(db.auth_user).select()
+    images = db(db.image.file).select()
+    pages = db(db.page).select()
+    return dict(pages=pages, users=users, images=images)
+
+
+def user():
+    """
+    exposes:
+    http://..../[app]/default/user/login
+    http://..../[app]/default/user/logout
+    http://..../[app]/default/user/register
+    http://..../[app]/default/user/profile
+    http://..../[app]/default/user/retrieve_password
+    http://..../[app]/default/user/change_password
+    http://..../[app]/default/user/manage_users (requires membership in
+    http://..../[app]/default/user/bulk_register
+    use @auth.requires_login()
+        @auth.requires_membership('group name')
+        @auth.requires_permission('read','table name',record_id)
+    to decorate functions that need access control
+    """
+    return dict(form=auth())
+
+
+@cache.action()
+def download():
+    return response.download(request, db)
+
+@auth.requires_login()
+def create():
+     form = SQLFORM(db.page).process(next=URL('index'))
+     return dict(form=form)
+
+def search():
+     """an ajax wiki search page"""
+     return dict(form=FORM(INPUT(_id='keyword',_name='keyword',
+              _onkeyup="ajax('callback', ['keyword'], 'target');")),
+              target_div=DIV(_id='target'))
+
+def callback():
+     """an ajax callback that returns a <ul> of links to wiki pages"""
+     query = db.page.title.contains(request.vars.keyword)
+     pages = db(query).select(orderby=db.page.title)
+     links = [A(p.title, _href=URL('show',args=p.id)) for p in pages]
+     return UL(*links)
+
+def show():
+     """shows a wiki page"""
+     this_page = db.page(request.args(0,cast=int)) or redirect(URL('index'))
+     db.blogpost.page_id.default = this_page.id
+     form = SQLFORM(db.post).process() if auth.user else None
+     pagecomments = db(db.blogpost.page_id==this_page.id).select()
+     return dict(page=this_page, post=pagecomments, form=form)
+
+
+def call():
+    """
+    exposes services. for example:
+    http://..../[app]/default/call/jsonrpc
+    decorate with @services.jsonrpc the functions to expose
+    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
+    """
+    return service()

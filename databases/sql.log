@@ -1,0 +1,103 @@
+timestamp: 2015-09-27T14:23:34.408821
+CREATE TABLE auth_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name CHAR(128),
+    last_name CHAR(128),
+    email CHAR(512),
+    password CHAR(512),
+    registration_key CHAR(512),
+    reset_password_key CHAR(512),
+    registration_id CHAR(512)
+);
+success!
+timestamp: 2015-09-27T14:23:34.430900
+CREATE TABLE auth_group(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2015-09-27T14:23:34.437312
+CREATE TABLE auth_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE  
+);
+success!
+timestamp: 2015-09-27T14:23:34.456016
+CREATE TABLE auth_permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE  ,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2015-09-27T14:23:34.460412
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2015-09-27T14:23:34.465509
+CREATE TABLE auth_cas(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
+    created_on TIMESTAMP,
+    service CHAR(512),
+    ticket CHAR(512),
+    renew CHAR(1)
+);
+success!
+timestamp: 2015-09-27T14:32:36.875534
+CREATE TABLE image(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title CHAR(512) UNIQUE,
+    file CHAR(512)
+);
+success!
+timestamp: 2015-09-27T14:44:03.147573
+CREATE TABLE document(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(512),
+    file CHAR(512),
+    created_on TIMESTAMP
+);
+success!
+timestamp: 2015-09-27T14:47:26.127581
+ALTER TABLE auth_user ADD photo_id INTEGER REFERENCES image (id) ON DELETE CASCADE  ;
+success!
+timestamp: 2015-09-27T14:47:26.153412
+CREATE TABLE page(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title CHAR(512),
+    body TEXT,
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  
+);
+success!
+timestamp: 2015-09-27T14:47:26.157631
+CREATE TABLE blogpost(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title CHAR(512),
+    body TEXT,
+    tags TEXT,
+    photo_id INTEGER REFERENCES image (id) ON DELETE CASCADE  ,
+    document_id INTEGER REFERENCES document (id) ON DELETE CASCADE  ,
+    created_on TIMESTAMP,
+    blogpage_id INTEGER REFERENCES page (id) ON DELETE CASCADE  
+);
+success!
+timestamp: 2015-09-27T14:47:26.161129
+CREATE TABLE comment(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    body TEXT,
+    created_by CHAR(512),
+    created_on TIMESTAMP,
+    blogpost_id INTEGER REFERENCES blogpost (id) ON DELETE CASCADE  
+);
+success!
